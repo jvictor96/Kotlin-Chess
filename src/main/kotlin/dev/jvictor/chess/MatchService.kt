@@ -3,6 +3,7 @@ package dev.jvictor.chess
 import dev.jvictor.chess.ports.PersistenceAdapter
 import dev.jvictor.chess.core.Board
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class MatchService(private val persistence: PersistenceAdapter) {
@@ -15,18 +16,26 @@ class MatchService(private val persistence: PersistenceAdapter) {
         board.white = player
         board.black = opponent
         board.move(board.buildMovement(movement))
+        persistence.saveBoard(board.id, board)
         return board
     }
 
-    fun movePiece(board: Int, player: String, movement: String): Board? {
+    fun movePiece(board: UUID, player: String, movement: String): Board? {
         val board = persistence.getBoard(board) ?: return null
         board.move(board.buildMovement(movement))
+        persistence.saveBoard(board.id, board)
         return board
     }
 
-    fun resign(board: Int, player: String): Board? {
+    fun resign(board: UUID, player: String): Board? {
         val board = persistence.getBoard(board) ?: return null
         board.winner = if (board.white == player) board.black else board.white
+        persistence.saveBoard(board.id, board)
+        return board
+    }
+
+    fun getMatch(board: UUID, player: String): Board? {
+        val board = persistence.getBoard(board) ?: return null
         return board
     }
 }

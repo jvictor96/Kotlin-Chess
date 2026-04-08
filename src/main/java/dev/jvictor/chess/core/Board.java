@@ -1,7 +1,7 @@
 package dev.jvictor.chess.core;
 
 import java.util.Map;
-import java.util.function.Function;
+import java.util.UUID;import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -19,9 +19,10 @@ public class Board {
     Map<Position, Piece> positions;
     public String white, black, winner;
     public boolean legal;
-    public int id;
+    public UUID id;
 
     public Board() {
+        id = UUID.randomUUID();
         pieces = new ArrayList<>();
         movements = new ArrayList<>();
         IntStream.range(1,9).forEach(i -> pieces.add(Piece.fromType("P", Color.WHITE, new Position(i, 2))));
