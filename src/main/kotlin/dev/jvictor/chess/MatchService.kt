@@ -8,7 +8,7 @@ import java.util.UUID
 @Service
 class MatchService(private val persistence: PersistenceAdapter) {
     fun getPlayerMatches(player: String): List<Board> {
-        return persistence.listGames().filter{ it.white == player}
+        return persistence.findAll().filter{ it.white == player}
     }
 
     fun challengePlayer(player: String, opponent: String, movement: String): Board {
@@ -16,26 +16,27 @@ class MatchService(private val persistence: PersistenceAdapter) {
         board.white = player
         board.black = opponent
         board.move(board.buildMovement(movement))
-        persistence.saveBoard(board.id, board)
+        persistence.save(board)
         return board
     }
 
-    fun movePiece(board: UUID, player: String, movement: String): Board? {
-        val board = persistence.getBoard(board) ?: return null
+    fun movePiece(boardId: UUID, player: String, movement: String): Board? {
+        val board = persistence.getBoardById(boardId) ?: return null
+        board.build();
         board.move(board.buildMovement(movement))
-        persistence.saveBoard(board.id, board)
+        persistence.save(board)
         return board
     }
 
-    fun resign(board: UUID, player: String): Board? {
-        val board = persistence.getBoard(board) ?: return null
+    fun resign(boardId: UUID, player: String): Board? {
+        val board = persistence.getBoardById(boardId) ?: return null
         board.winner = if (board.white == player) board.black else board.white
-        persistence.saveBoard(board.id, board)
+        persistence.save(board)
         return board
     }
 
     fun getMatch(board: UUID, player: String): Board? {
-        val board = persistence.getBoard(board) ?: return null
+        val board = persistence.getBoardById(board) ?: return null
         return board
     }
 }

@@ -8,17 +8,24 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import dev.jvictor.chess.core.Piece.Color;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class Board {
-    
+
+    @Transient
     List<Piece> pieces;
     public List<String> movements;
+    @Transient
     Map<Position, Piece> positions;
     public String white, black, winner;
     public boolean legal;
+    @Id
     public UUID id;
 
     public Board() {
@@ -60,6 +67,12 @@ public class Board {
         return new Board(clonedPieces, clonedMovements);
     }
 
+    public void build() {
+        movements.forEach(movement -> {
+            this.moveWithoutValidation(this.buildMovement(movement));
+        });
+    }
+
     public Piece getPieceAt(String position) {
         return positions.get(Position.fromString(position));
     }
@@ -75,12 +88,12 @@ public class Board {
     private record PieceAndDestinations(Piece piece, List<Position> destinations) {}
 
     public boolean isColorInCheckMate(Piece.Color color) {
-        Predicate<List<Position>> cloneAndMove = (List<Position> positions) -> {
+        Predicate<List<Position>> cloneAndMove = (List<Position> pPositions) -> {
             Board clone = this.clone();
-            Movement movement = new Movement(positions.get(0), positions.get(0), clone.positions);
+            Movement movement = new Movement(pPositions.get(0), pPositions.get(1), clone.positions);
             return clone.move(movement).legal;
         };
-        Stream<PieceAndDestinations> tuples = pieces.stream().map(
+        Stream<PieceAndDestinations> tuples = pieces.stream().filter(p -> p.color == color).map(
             p -> new PieceAndDestinations(p, p.getAllPossibleDestinations()));
 
         Stream<PieceAndDestinations> valid = tuples.filter(pAndD -> pAndD.destinations.stream().anyMatch(

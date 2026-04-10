@@ -6,29 +6,24 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Repository
 import java.util.ArrayList
 import java.util.UUID
+import java.util.concurrent.CopyOnWriteArrayList
 
 @Repository
 @Profile("dev", "local")
 class InMemoryPersistence : PersistenceAdapter {
-    var boards: MutableList<Board> = java.util.ArrayList<Board>()
+    var boards: MutableList<Board> = CopyOnWriteArrayList<Board>()
     var nextId: Int = 0
 
-    override fun getBoard(id: UUID): Board? {
+    override fun getBoardById(id: UUID): Board? {
         return boards.firstOrNull() { it.id == id }
     }
 
-    override fun saveBoard(id: UUID, board: Board) {
-        board.id = id
+    override fun save(board: Board): Board {
         boards.add(board)
+        return board
     }
 
-
-    override fun listGames(): MutableList<Board> {
+    override fun findAll(): MutableList<Board> {
         return boards
-    }
-
-    override fun clearAll() {
-        boards = ArrayList<Board>() as MutableList<Board>
-        nextId = 0
     }
 }

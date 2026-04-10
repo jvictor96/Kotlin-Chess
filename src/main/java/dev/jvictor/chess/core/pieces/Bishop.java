@@ -25,9 +25,9 @@ public class Bishop extends Piece {
                 destination.x > origin.x && destination.y < origin.y ? 0 : 2, 
                 IntStream.range(origin.x + 1, destination.x).mapToObj(i -> new Position(i, origin.y - i + origin.x)).toList(),
                 destination.x < origin.x && destination.y < origin.y ? 0 : 3, 
-                IntStream.range(destination.x + 1, origin.x).mapToObj(i -> new Position(i, destination.y - i + origin.x)).toList(),
+                IntStream.range(destination.x + 1, origin.x).mapToObj(i -> new Position(i, destination.y + i - destination.x)).toList(),
                 destination.x < origin.x && destination.y > origin.y ? 0 : 4, 
-                IntStream.range(destination.x + 1, origin.x).mapToObj(i -> new Position(i, destination.y + i - origin.x)).toList(),
+                IntStream.range(destination.x + 1, origin.x).mapToObj(i -> new Position(i, destination.y - i + destination.x)).toList(),
                 destination.x == origin.x && destination.y == origin.y ? 0 : 5, new ArrayList<Position>()
             ).get(0);
         }

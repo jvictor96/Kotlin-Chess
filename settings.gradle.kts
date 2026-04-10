@@ -1,3 +1,1 @@
-rootProject.name = "demo"
-
-include("src:main:java")
+rootProject.name = "chess"
