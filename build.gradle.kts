@@ -1,8 +1,9 @@
 plugins {
 	kotlin("jvm") version "2.2.21"
 	kotlin("plugin.spring") version "2.2.21"
-	id("org.springframework.boot") version "4.0.5"
+	id("org.springframework.boot") version "3.5.14"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("org.graalvm.buildtools.native") version "1.1.1"
 	application
 }
 
@@ -11,12 +12,22 @@ version = "0.0.1-SNAPSHOT"
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
 repositories {
 	mavenCentral()
+}
+
+graalvmNative {
+    binaries {
+        named("main") {
+            buildArgs.add("-O3")      
+			buildArgs.add("-H:IncludeLocales=fr,en")
+            mainClass = "dev.jvictor.chess.DemoApplicationKt"     
+        }
+    }
 }
 
 dependencies {

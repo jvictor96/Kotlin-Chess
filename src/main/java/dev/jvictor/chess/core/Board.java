@@ -99,7 +99,7 @@ public class Board {
         Stream<PieceAndDestinations> valid = tuples.filter(pAndD -> pAndD.destinations.stream().anyMatch(
                 d -> cloneAndMove.test(List.of(pAndD.piece.position, d))));
                 
-        return valid.peek(pAndD -> System.out.println(pAndD.piece)).toList().size() == 0;
+        return valid.toList().size() == 0;
     }
 
     private void updatePositions(Movement movement) {
